@@ -4,4 +4,5 @@ from apps.common.models import BaseModel
 
 
 class Paymet(BaseModel):
-	pass
+	title = models.CharField(max_length=255, default='')
+

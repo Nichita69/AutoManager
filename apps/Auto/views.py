@@ -1,21 +1,28 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+# auto/views.py
 
-from apps.common.views import CustomGenericViewSet
+from django.http import JsonResponse
 from apps.Auto.models import Auto
-from apps.Auto.serializers import AutoSerializer
+
+def filter_autos(request):
+    przebieg_min = request.GET.get('przebieg_min')
+    przebieg_max = request.GET.get('przebieg_max')
+    rok_min = request.GET.get('rok_min')
+    rok_max = request.GET.get('rok_max')
+    fraza = request.GET.get('fraza')
+
+    autos = Auto.objects.all()
+
+    if przebieg_min:
+        autos = autos.filter(przebieg__gte=przebieg_min)
+    if przebieg_max:
+        autos = autos.filter(przebieg__lte=przebieg_max)
+    if rok_min:
+        autos = autos.filter(rok_produkcji__gte=rok_min)
+    if rok_max:
+        autos = autos.filter(rok_produkcji__lte=rok_max)
+    if fraza:
+        autos = autos.filter(fraza__icontains=fraza)
 
 
-class AutoViewSet(CustomGenericViewSet, ModelViewSet):
-    serializer_class = AutoSerializer
-    queryset = Auto.objects.all()
-    permission_classes = (IsAuthenticated,)
-    ordering = '-updated_at'
-    filterset_fields = '__all__'
-    search_fields = '__all__'
-    serializers_by_action = {
-        'default': serializer_class,
-    }
-    permission_by_action = {
-        'default': permission_classes,
-    }
+    data = [{'przebieg': auto.przebieg, 'rok_produkcji': auto.rok_produkcji, 'fraza': auto.fraza} for auto in autos]
+    return JsonResponse(data, safe=False)

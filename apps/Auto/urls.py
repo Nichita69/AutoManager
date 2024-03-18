@@ -1,11 +1,9 @@
-from rest_framework import routers
+# auto/urls.py
 
-from apps.Auto.views import AutoViewSet
-
-router = routers.SimpleRouter(trailing_slash=False)
-
-router.register(r'Auto', AutoViewSet, basename='Auto')
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    *router.urls,
+    # path('get_links/', views.get_links, name='get_links'),
+    path('filter_autos/', views.filter_autos, name='filter_autos'),
 ]

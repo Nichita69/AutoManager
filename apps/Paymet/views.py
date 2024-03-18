@@ -19,3 +19,6 @@ class PaymetViewSet(CustomGenericViewSet, ModelViewSet):
     permission_by_action = {
         'default': permission_classes,
     }
+
+
+

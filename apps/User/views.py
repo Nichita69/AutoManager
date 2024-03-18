@@ -8,8 +8,6 @@ from rest_framework.response import Response
 from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
 from str2bool import str2bool
-
-
 from apps.User.serializers import UserSerializer
 
 
@@ -22,16 +20,17 @@ class UserViewSet(ModelViewSet):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
-        user = User.objects.create_user(
-            first_name=validated_data['first_name'],
-            is_staff=True
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-
-        return Response(UserSerializer(user).data)
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            user = User.objects.create_user(
+                username=validated_data['username'],
+                email=validated_data['email'],
+                password=validated_data['password'],
+                first_name=validated_data.get('first_name', ''),
+                is_staff=True
+            )
+            return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         now = timezone.now()
@@ -46,5 +45,4 @@ class UserViewSet(ModelViewSet):
                 if not is_online
                 else queryset.filter(Q(last_login__gte=interval))
             )
-
         return queryset
