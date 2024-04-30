@@ -1,16 +1,9 @@
-from apps.User.views import UserViewSet
+# urls.py
 from django.urls import path
-from rest_framework import routers
-
-
-
-# Create your patterns here.
-
-app_name = "User"  # noqa
-
-router = routers.SimpleRouter(trailing_slash=False)
-router.register(r"User", UserViewSet, basename="User")
+from apps.Auto.views import UserViewSet
 
 urlpatterns = [
-    *router.urls,
+    path('', UserViewSet.as_view({'get': 'list'}), name='user-list'),
+    path('auth/login/', UserViewSet.as_view({'post': 'login'}), name='user-login'),
+    path('auth/register/', UserViewSet.as_view({'post': 'post'}), name='user-register'),
 ]

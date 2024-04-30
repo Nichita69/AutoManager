@@ -1,9 +1,6 @@
-# auto/urls.py
-
 from django.urls import path
-from . import views
+from apps.Auto.views import upload_car_data_from_json_file
 
-# urlpatterns = [
-#     # path('get_links/', views.get_links, name='get_links'),
-#     path('filter_autos/', views.filter_autos, name='filter_autos'),
-# ]
+urlpatterns = [
+    path('upload/', upload_car_data_from_json_file, name='car_upload'),
+]
